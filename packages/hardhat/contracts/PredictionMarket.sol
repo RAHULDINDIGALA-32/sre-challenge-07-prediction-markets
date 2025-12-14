@@ -4,6 +4,12 @@ pragma solidity >=0.8.0 <0.9.0;
 import { PredictionMarketToken } from "./PredictionMarketToken.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title PredictionMarket
+ * @author Rahul Dindigala
+ * @notice Prediction market contract
+ * @dev Prediction market contract
+  */
 contract PredictionMarket is Ownable {
     /////////////////
     /// Errors //////

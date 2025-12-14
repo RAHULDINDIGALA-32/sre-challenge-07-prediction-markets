@@ -3,6 +3,12 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+/*
+ * @title PredictionMarketToken
+ * @author Rahul Dindigala
+ * @notice Prediction market token contract
+ * @dev Prediction market token contract
+ */
 contract PredictionMarketToken is ERC20 {
     error PredictionMarketToken__OnlyPredictionMarketCanMint();
     error PredictionMarketToken__OnlyPredictionMarketCanBurn();

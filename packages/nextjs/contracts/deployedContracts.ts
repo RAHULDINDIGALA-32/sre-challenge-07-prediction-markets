@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     PredictionMarket: {
-      address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       abi: [
         {
           inputs: [
@@ -644,19 +644,6 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "noTokenReserve",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
           name: "owner",
           outputs: [
             {
@@ -742,6 +729,19 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "s_isReported",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "s_lpTradingRevenue",
           outputs: [
             {
@@ -761,6 +761,19 @@ const deployedContracts = {
               internalType: "string",
               name: "",
               type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "s_winningToken",
+          outputs: [
+            {
+              internalType: "contract PredictionMarketToken",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",
@@ -797,19 +810,6 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
-        {
-          inputs: [],
-          name: "yesTokenReserve",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
       ],
       inheritedFunctions: {
         owner: "@openzeppelin/contracts/access/Ownable.sol",
@@ -818,7 +818,7 @@ const deployedContracts = {
       },
     },
     PredictionMarketTokenNo: {
-      address: "0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E",
+      address: "0x440C0fCDC317D69606eabc35C0F676D1a8251Ee1",
       abi: [
         {
           inputs: [
@@ -1235,7 +1235,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     PredictionMarketTokenYes: {
-      address: "0x61c36a8d610163660E21a8b7359e1Cac0C9133e1",
+      address: "0x9bd03768a7DCc129555dE410FF8E85528A4F88b5",
       abi: [
         {
           inputs: [

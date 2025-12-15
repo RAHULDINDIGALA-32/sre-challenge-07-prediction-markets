@@ -44,8 +44,20 @@ contract PredictionMarket is Ownable {
     uint256 private constant PRECISION = 1e18;
 
     /// Checkpoint 2 ///
+    uint256 public s_ethCollateral;
+    uint256 public s_lpTradingRevenue;
+    address public immutable i_liquidityProvider;
+    address public immutable i_oracle;
+    string public  s_question;
+    uint256 public immutable i_initialTokenValue;
+    uint8 public immutable i_initialYesProbability;
+    uint8 public immutable i_percentageLocked;
 
     /// Checkpoint 3 ///
+    PredictionMarketToken public immutable i_yesToken;
+    PredictionMarketToken public immutable i_noToken;
+    uint256 public yesTokenReserve;
+    uint256 public noTokenReserve;
 
     /// Checkpoint 5 ///
 
@@ -84,7 +96,37 @@ contract PredictionMarket is Ownable {
         uint8 _percentageToLock
     ) payable Ownable(_liquidityProvider) {
         /// Checkpoint 2 ////
+        if (msg.value == 0) {
+            revert PredictionMarket__MustProvideETHForInitialLiquidity();
+        }
+        if (_initialYesProbability >=100 || _initialYesProbability == 0) {
+            revert PredictionMarket__InvalidProbability();
+        }
+        if (_percentageToLock >=100 || _percentageToLock == 0) {
+            revert PredictionMarket__InvalidPercentageToLock();
+        }
+
+        i_oracle = _oracle;
+        s_question = _question;
+        i_initialTokenValue = _initialTokenValue;
+        i_initialYesProbability = _initialYesProbability;
+        i_percentageLocked = _percentageToLock;
+        s_ethCollateral = msg.value;
+        i_liquidityProvider = _liquidityProvider;
+
         /// Checkpoint 3 ////
+        uint256 initialTokenAmount = (msg.value * PRECISION) / _initialTokenValue;
+        i_yesToken = new PredictionMarketToken("Yes", "Y", _liquidityProvider, initialTokenAmount);
+        i_noToken = new PredictionMarketToken("No", "N", _liquidityProvider, initialTokenAmount);
+        uint256 initialYesTokenToLock = (initialTokenAmount * _initialYesProbability * _percentageToLock * 2) / 10000;
+        uint256 initialNoTokenToLock = (initialTokenAmount * (100 - _initialYesProbability) * _percentageToLock * 2) / 10000;
+        
+        bool success1 = i_yesToken.transfer(msg.sender, initialYesTokenToLock);
+        bool success2 = i_noToken.transfer(msg.sender, initialNoTokenToLock);
+        if (!success1 || !success2) {
+            revert PredictionMarket__TokenTransferFailed();
+        }
+
     }
 
     /////////////////
@@ -240,20 +282,20 @@ contract PredictionMarket is Ownable {
         )
     {
         /// Checkpoint 3 ////
-        // oracle = i_oracle;
-        // initialTokenValue = i_initialTokenValue;
-        // percentageLocked = i_percentageLocked;
-        // initialProbability = i_initialYesProbability;
-        // question = s_question;
-        // ethCollateral = s_ethCollateral;
-        // lpTradingRevenue = s_lpTradingRevenue;
-        // predictionMarketOwner = owner();
-        // yesToken = address(i_yesToken);
-        // noToken = address(i_noToken);
-        // outcome1 = i_yesToken.name();
-        // outcome2 = i_noToken.name();
-        // yesTokenReserve = i_yesToken.balanceOf(address(this));
-        // noTokenReserve = i_noToken.balanceOf(address(this));
+        oracle = i_oracle;
+        initialTokenValue = i_initialTokenValue;
+        percentageLocked = i_percentageLocked;
+        initialProbability = i_initialYesProbability;
+        question = s_question;
+        ethCollateral = s_ethCollateral;
+        lpTradingRevenue = s_lpTradingRevenue;
+        predictionMarketOwner = owner();
+        yesToken = address(i_yesToken);
+        noToken = address(i_noToken);
+        outcome1 = i_yesToken.name();
+        outcome2 = i_noToken.name();
+        yesTokenReserve = i_yesToken.balanceOf(address(this));
+        noTokenReserve = i_noToken.balanceOf(address(this));
         /// Checkpoint 5 ////
         // isReported = s_isReported;
         // winningToken = address(s_winningToken);

@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     PredictionMarket: {
-      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
       abi: [
         {
           inputs: [
@@ -818,7 +818,7 @@ const deployedContracts = {
       },
     },
     PredictionMarketTokenNo: {
-      address: "0x06B1D212B8da92b83AF328De5eef4E211Da02097",
+      address: "0xe082b26cEf079a095147F35c9647eC97c2401B83",
       abi: [
         {
           inputs: [
@@ -1235,7 +1235,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     PredictionMarketTokenYes: {
-      address: "0x94099942864EA81cCF197E9D71ac53310b1468D8",
+      address: "0x8aCd85898458400f7Db866d53FCFF6f0D49741FF",
       abi: [
         {
           inputs: [

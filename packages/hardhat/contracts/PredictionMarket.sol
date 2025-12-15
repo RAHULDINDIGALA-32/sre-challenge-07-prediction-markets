@@ -16,6 +16,8 @@ contract PredictionMarket is Ownable {
     /////////////////
 
     error PredictionMarket__MustProvideETHForInitialLiquidity();
+    error PredictionMarket__MustProvideETHForLiquidity();
+    error PredictionMarket__InvalidETHAmountToWithdraw();
     error PredictionMarket__InvalidProbability();
     error PredictionMarket__PredictionAlreadyReported();
     error PredictionMarket__OnlyOracleCanReport();
@@ -139,6 +141,15 @@ contract PredictionMarket is Ownable {
      */
     function addLiquidity() external payable onlyOwner {
         //// Checkpoint 4 ////
+        if (msg.value == 0) {
+            revert PredictionMarket__MustProvideETHForLiquidity();
+        }
+        s_ethCollateral += msg.value;
+        uint256 tokensToMint = (msg.value * PRECISION) / i_initialTokenValue;
+        i_yesToken.mint(address(this), tokensToMint);
+        i_noToken.mint(address(this), tokensToMint);
+        emit LiquidityAdded(msg.sender, msg.value, tokensToMint);
+
     }
 
     /**
@@ -148,6 +159,26 @@ contract PredictionMarket is Ownable {
      */
     function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner {
         //// Checkpoint 4 ////
+        // if (_ethToWithdraw == 0 || _ethToWithdraw > s_ethCollateral) {
+        //     revert PredictionMarket__InvalidETHAmountToWithdraw();
+        // }
+        uint256 tokensToBurn = (_ethToWithdraw * PRECISION) / i_initialTokenValue;
+        if(tokensToBurn > i_yesToken.balanceOf(address(this)) ) {
+            revert PredictionMarket__InsufficientTokenReserve(Outcome.YES, tokensToBurn);
+        }
+        if (tokensToBurn > i_noToken.balanceOf(address(this))) {
+            revert PredictionMarket__InsufficientTokenReserve(Outcome.NO, tokensToBurn);
+        }
+        s_ethCollateral -= _ethToWithdraw;
+        i_yesToken.burn(address(this), tokensToBurn);
+        i_noToken.burn(address(this), tokensToBurn);
+
+        (bool success, ) = msg.sender.call{value: _ethToWithdraw}("");
+        if (!success) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+        
+        emit LiquidityRemoved(msg.sender, _ethToWithdraw, tokensToBurn);
     }
 
     /**
@@ -299,5 +330,8 @@ contract PredictionMarket is Ownable {
         /// Checkpoint 5 ////
         // isReported = s_isReported;
         // winningToken = address(s_winningToken);
-    }
+    }  
+
+
+
 }

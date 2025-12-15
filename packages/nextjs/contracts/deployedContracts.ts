@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     PredictionMarket: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
       abi: [
         {
           inputs: [
@@ -137,6 +137,11 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "PredictionMarket__InvalidETHAmountToWithdraw",
+          type: "error",
+        },
+        {
+          inputs: [],
           name: "PredictionMarket__InvalidPercentageToLock",
           type: "error",
         },
@@ -148,6 +153,11 @@ const deployedContracts = {
         {
           inputs: [],
           name: "PredictionMarket__MustProvideETHForInitialLiquidity",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "PredictionMarket__MustProvideETHForLiquidity",
           type: "error",
         },
         {
@@ -808,7 +818,7 @@ const deployedContracts = {
       },
     },
     PredictionMarketTokenNo: {
-      address: "0x9f1ac54BEF0DD2f6f3462EA0fa94fC62300d3a8e",
+      address: "0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E",
       abi: [
         {
           inputs: [
@@ -1225,7 +1235,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     PredictionMarketTokenYes: {
-      address: "0xCafac3dD18aC6c6e92c921884f9E4176737C052c",
+      address: "0x61c36a8d610163660E21a8b7359e1Cac0C9133e1",
       abi: [
         {
           inputs: [

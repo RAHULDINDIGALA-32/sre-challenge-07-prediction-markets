@@ -7,9 +7,27 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 /**
  * @title PredictionMarket
  * @author Rahul Dindigala
- * @notice Prediction market contract
- * @dev Prediction market contract
-  */
+ *
+ * @notice
+ * A decentralized, ETH-collateralized binary prediction market.
+ *
+ * Users can buy and sell outcome tokens (YES / NO) whose prices reflect
+ * the market-implied probability of each outcome. After resolution,
+ * holders of the winning outcome token can redeem them 1:1 for ETH.
+ *
+ * @dev
+ * - The market uses two ERC20 outcome tokens (YES and NO).
+ * - Token prices are derived from a probability curve based on tokens sold.
+ * - ETH collateral guarantees redemption of winning tokens.
+ * - Initial probabilities are bootstrapped via locked tokens.
+ * - Liquidity provisioning and settlement are owner-controlled.
+ * - Outcome reporting is oracle-controlled.
+ *
+ * Security assumptions:
+ * - Oracle is trusted to report the correct outcome.
+ * - Liquidity provider is trusted not to abuse liquidity controls.
+ * - Token minting/burning is strictly limited to this contract.
+ */
 contract PredictionMarket is Ownable {
     /////////////////
     /// Errors //////
@@ -122,6 +140,25 @@ contract PredictionMarket is Ownable {
     ////Constructor///
     //////////////////
 
+
+    /**
+ * @notice
+ * Deploys a new prediction market and initializes liquidity, pricing,
+ * and probability bootstrapping.
+ *
+ * @dev
+ * - Requires ETH to seed initial liquidity.
+ * - Mints equal amounts of YES and NO tokens.
+ * - Locks a percentage of tokens to simulate an initial probability.
+ * - Locked tokens are held by the market contract and cannot circulate.
+ *
+ * @param _liquidityProvider Address that owns the market and manages liquidity
+ * @param _oracle Address authorized to report the final outcome
+ * @param _question Human-readable prediction question
+ * @param _initialTokenValue ETH value (scaled by 1e18) of one winning token
+ * @param _initialYesProbability Initial YES probability (1–99)
+ * @param _percentageToLock Percentage of supply locked to seed probability
+ */
     constructor(
         address _liquidityProvider,
         address _oracle,

@@ -3,11 +3,19 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-/*
+/**
  * @title PredictionMarketToken
  * @author Rahul Dindigala
- * @notice Prediction market token contract
- * @dev Prediction market token contract
+ *
+ * @notice
+ * ERC20 token representing a claim on a specific prediction outcome.
+ *
+ * Each token can be redeemed for ETH if and only if its outcome wins.
+ *
+ * @dev
+ * - Minting and burning are restricted to the PredictionMarket contract.
+ * - Liquidity provider tokens are locked and non-transferable.
+ * - Used as a share-based accounting unit for probabilities and payouts.
  */
 contract PredictionMarketToken is ERC20 {
     error PredictionMarketToken__OnlyPredictionMarketCanMint();

@@ -104,7 +104,7 @@ contract PredictionMarket is Ownable {
 
 
     /// Checkpoint 8 ///
-    modifier tokenAmountGreaterThanZero(uint256 _amount) {
+    modifier amountGreaterThanZero(uint256 _amount) {
         if (_amount == 0) {
             revert PredictionMarket__AmountMustBeGreaterThanZero();
         }
@@ -265,7 +265,7 @@ contract PredictionMarket is Ownable {
      * @param _outcome The possible outcome (YES or NO) to buy tokens for
      * @param _amountTokenToBuy Amount of tokens to purchase
      */
-    function buyTokensWithETH(Outcome _outcome, uint256 _amountTokenToBuy) external payable predictionNotReported tokenAmountGreaterThanZero(_amountTokenToBuy) notOwner {
+    function buyTokensWithETH(Outcome _outcome, uint256 _amountTokenToBuy) external payable predictionNotReported amountGreaterThanZero(_amountTokenToBuy) notOwner {
         /// Checkpoint 8 ////
         (uint256 currentTokenReserves, ) = _getCurrentReserves(_outcome);
        if (_amountTokenToBuy > currentTokenReserves) {
@@ -290,7 +290,7 @@ contract PredictionMarket is Ownable {
      * @param _outcome The possible outcome (YES or NO) to sell tokens for
      * @param _tradingAmount The amount of tokens to sell
      */
-    function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount) external predictionNotReported tokenAmountGreaterThanZero(_tradingAmount) notOwner {
+    function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount) external predictionNotReported amountGreaterThanZero(_tradingAmount) notOwner {
         /// Checkpoint 8 ////
         (uint256 userTokenBalance, uint256 userTokenAllowance) = _outcome == Outcome.YES ? (i_yesToken.balanceOf(msg.sender), i_yesToken.allowance(msg.sender, address(this))) : (i_noToken.balanceOf(msg.sender), i_noToken.allowance(msg.sender, address(this)));
     
@@ -322,8 +322,24 @@ contract PredictionMarket is Ownable {
      * @dev Only if the prediction is resolved
      * @param _amount The amount of winning tokens to redeem
      */
-    function redeemWinningTokens(uint256 _amount) external {
+    function redeemWinningTokens(uint256 _amount) external predictionReported amountGreaterThanZero(_amount) notOwner {
         /// Checkpoint 9 ////
+        uint256 userWinningTokens = s_winningToken.balanceOf(msg.sender);
+        if(_amount > userWinningTokens) {
+            revert PredictionMarket__InsufficientWinningTokens();
+        }
+
+        uint256 totalEthToSend = (_amount * i_initialTokenValue) / PRECISION;
+
+        s_ethCollateral -= totalEthToSend;
+        s_winningToken.burn(msg.sender, _amount);
+
+        (bool success, ) = msg.sender.call{value: totalEthToSend}("");
+        if (!success) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+        
+        emit WinningTokensRedeemed(msg.sender, _amount, totalEthToSend);      
     }
 
     /**
@@ -335,8 +351,6 @@ contract PredictionMarket is Ownable {
     function getBuyPriceInEth(Outcome _outcome, uint256 _tradingAmount) public view returns (uint256) {
         /// Checkpoint 7 ////
         return _calculatePriceInEth(_outcome, _tradingAmount, false);
-
-
     }
 
     /**
